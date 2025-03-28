@@ -1,0 +1,396 @@
+
+/* Modern Card Design */
+.status-container {
+    width: 100%;
+    max-width: 800px;
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    isolation: isolate;
+}
+
+.status-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        800px circle at var(--mouse-x) var(--mouse-y), 
+        var(--primary-alpha-10), 
+        transparent 60%
+    );
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.status-container:hover::before {
+    opacity: 1;
+}
+
+/* Header with animated underline */
+.status-header {
+    padding: var(--spacing-lg);
+    text-align: center;
+    position: relative;
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    color: var(--white);
+}
+
+.status-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    position: relative;
+    display: inline-block;
+}
+
+.status-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--white);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.status-container:hover .status-header h1::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Form Styles */
+.status-form {
+    padding: var(--spacing-lg);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--gray-900);
+    font-size: 0.95rem;
+}
+
+.input-container {
+    position: relative;
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 52px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    font-size: 1rem;
+    color: var(--gray-900);
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-alpha-10);
+}
+
+.input-icon {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: var(--spacing-xs);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+    z-index: -1;
+}
+
+.submit-btn:hover::before {
+    left: 100%;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+}
+
+/* Status Dialog Modal */
+.dialog-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.dialog-content {
+    width: 90%;
+    max-width: 700px;
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: fadeInUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dialog-header {
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    position: relative;
+}
+
+.dialog-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+}
+
+.close-dialog {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-dialog:hover {
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* Ticket Status Display */
+.ticket-details {
+    padding: var(--spacing-lg);
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.ticket-id {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.status-badge {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 46, 46, 0.7); }
+    70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(255, 46, 46, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 46, 46, 0); }
+}
+
+/* Ticket Info Grid */
+.ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.detail-card {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    transition: var(--transition);
+    border: 1px solid var(--gray-200);
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-alpha-20);
+}
+
+.detail-card.full-width {
+    grid-column: span 2;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-xxs);
+    display: block;
+}
+
+.detail-value {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--gray-900);
+    word-break: break-word;
+}
+
+.empty-value {
+    color: var(--gray-200);
+    font-style: italic;
+}
+
+/* Attachments */
+.attachments-container {
+    margin-top: var(--spacing-md);
+}
+
+.attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+}
+
+.attachment-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--gray-100);
+    border-radius: 20px;
+    color: var(--primary-dark);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.attachment-item:hover {
+    background: var(--primary);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+/* Footer Actions */
+.dialog-footer {
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    border-top: 1px solid var(--gray-200);
+}
+
+.action-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    border: none;
+}
+
+.print-btn {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.print-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+}
+
+.close-btn {
+    background: var(--gray-100);
+    color: var(--gray-900);
+}
+
+.close-btn:hover {
+    background: var(--gray-200);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ticket-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-card {
+        grid-column: span 1 !important;
+    }
+    
+    .status-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .dialog-header h2 {
+        font-size: 1.5rem;
+    }
+}

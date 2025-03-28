@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Ticket | JÜMP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/request.css">
+    <style>
+        /* Enhanced back button to match your design system */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+            border-radius: 50px;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 26, 42, 0.3);
+        }
+        
+        .back-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+        
+        /* Header adjustments */
+        .modern-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-container h1 {
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="modern-header">
+            <div class="logo-container">
+                <h1>REQUEST TICKET</h1>
+            </div>
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Menu
+            </a>
+        </header>
+
+        <form id="ticket-request-form" class="ticket-form" method="POST" action="request.php" enctype="multipart/form-data">
+            <h2 class="section-title"><i class="fas fa-user-circle"></i> Customer Information</h2>
+            
+            <div class="form-group">
+                <label for="ticket-type">Ticket Type *</label>
+                <select id="ticket-type-select" name="ticket_type" required style="display: none;">
+                    <option value="">Select Ticket Type</option>
+                    <option value="ASC">ASC</option>
+                    <option value="Technical">Technical</option>
+                </select>
+                
+                <div class="ticket-type-container">
+                    <div class="ticket-type-card" data-value="ASC">
+                        <i class="fas fa-headset ticket-type-icon"></i>
+                        <div class="ticket-type-label">Autorized Service Center</div>
+                        <div class="ticket-type-description">Customer support and service requests</div>
+                    </div>
+                    <div class="ticket-type-card" data-value="Technical">
+                        <i class="fas fa-tools ticket-type-icon"></i>
+                        <div class="ticket-type-label">Technical Support</div>
+                        <div class="ticket-type-description">Technical issues and IT support</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="flex: 0.5;">
+                    <label for="request-date">Request Date</label>
+                    <input type="text" id="request-date" name="request_date" class="form-control" readonly style="background-color: #f9f9f9;">
+                </div>
+                <div class="form-group" style="flex: 1.5;">
+                    <label for="customer-name">Customer Name *</label>
+                    <input type="text" id="customer-name" name="customer_name" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" class="form-control">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mobile">Mobile No *</label>
+                    <input type="tel" id="mobile" name="mobile" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact-person">Contact Person *</label>
+                    <input type="text" id="contact-person" name="contact_person" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="on-site-address">On Site Address *</label>
+                    <input type="text" id="on-site-address" name="on_site_address" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="same-address">
+                    <input type="checkbox" id="same-as-customer"> Same as Customer Address
+                </label>
+            </div>
+
+            <div id="technical-info-section" style="display: none;">
+                <h2 class="section-title"><i class="fas fa-cogs"></i> Technical Information</h2>
+                
+                <div class="form-group">
+                    <label for="technical-category">Technical Category *</label>
+                    <select id="technical-category" name="technical_category" class="form-control" required>
+                        <option value="">Select Category</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="Enterprise Networking">Enterprise Networking</option>
+                        <option value="Data Center">Data Center</option>
+                        <option value="End User Computing">End User Computing</option>
+                        <option value="Facilities & Building Management">Facilities & Building Management</option>
+                        <option value="Unified Communications">Unified Communications</option>
+                        <option value="Audio-Visual">Audio-Visual</option>
+                        <option value="Software">Software</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="technical-remarks">Additional Remarks</label>
+                    <textarea id="technical-remarks" name="technical_remarks" class="form-control" rows="4" 
+                              placeholder="Describe your technical issue in detail"></textarea>
+                </div>
+            </div>
+
+            <div id="equipment-info-section">
+                <h2 class="section-title"><i class="fas fa-laptop"></i> Equipment Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="brand">Brand *</label>
+                        <select id="brand" name="brand" class="form-control" required>
+                            <option value="">Select Brand</option>
+                            <option value="A4TECH">A4TECH</option>
+                            <option value="Acer">Acer</option>
+                            <option value="APC">APC</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Asus">Asus</option>
+                            <option value="Brother">Brother</option>
+                            <option value="Canon">Canon</option>
+                            <option value="Cisco">Cisco</option>
+                            <option value="Dell">Dell</option>
+                            <option value="Eaton">Eaton</option>
+                            <option value="Epson">Epson</option>
+                            <option value="Fortinet">Fortinet</option>
+                            <option value="Honeywell">Honeywell</option>
+                            <option value="HP">HP</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="LG">LG</option>
+                            <option value="Others">Others</option>
+                            <option value="Phoenix">Phoenix</option>
+                            <option value="Samsung">Samsung</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="make">Make *</label>
+                        <select id="make" name="make" class="form-control" required>
+                            <option value="">Select Make</option>
+                            <option value="AIO">AIO</option>
+                            <option value="Desktop">Desktop</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Mobile">Mobile</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Others">Others</option>
+                            <option value="Printer">Printer</option>
+                            <option value="Server">Server</option>
+                            <option value="Storage">Storage</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="UPS">UPS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="model">Model</label>
+                        <input type="text" id="model" name="model" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="serial-no">Serial No *</label>
+                        <input type="text" id="serial-no" name="serial_no" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="warranty-status">Warranty Status *</label>
+                    <select id="warranty-status" name="warranty_status" class="form-control" required>
+                        <option value="">Select Warranty Status</option>
+                        <option value="In Warranty">In Warranty</option>
+                        <option value="Out of Warranty">Out of Warranty</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Additional Remarks</label>
+                    <textarea id="remarks" name="remarks" class="form-control" rows="4" placeholder="Enter any additional information or special instructions"></textarea>
+                </div>
+            </div>
+
+            <h2 class="section-title"><i class="fas fa-paperclip"></i> Attachments</h2>
+            <div class="form-group">
+                <div class="file-upload" id="file-upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to attach files or drag and drop here</p>
+                    <input type="file" id="file-input" name="attachments[]" style="display: none;" multiple>
+                </div>
+                <div id="file-list" style="margin-top: 20px;"></div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn-gradient">
+                    <i class="fas fa-paper-plane"></i> Submit Ticket
+                </button>
+            </div>
+        </form>
+
+        <footer class="modern-footer">
+            <p>&copy; 2023 JÜMP E-Ticket System. All rights reserved.</p>
+            <div class="tech-stack">
+                <i class="fab fa-microsoft"></i>
+                <i class="fab fa-aws"></i>
+                <i class="fab fa-google"></i>
+                <i class="fab fa-react"></i>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to set the current date
+            function setRequestDate() {
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                document.getElementById('request-date').value = formattedDate;
+            }
+            
+            // Initialize with current date
+            setRequestDate();
+
+            const ticketCards = document.querySelectorAll('.ticket-type-card');
+            const ticketTypeSelect = document.getElementById('ticket-type-select');
+            const technicalInfoSection = document.getElementById('technical-info-section');
+            const equipmentInfoSection = document.getElementById('equipment-info-section');
+            const addressField = document.getElementById('address');
+
+            // Initialize form with ASC as default
+            document.querySelector('.ticket-type-card[data-value="ASC"]').classList.add('selected');
+            ticketTypeSelect.value = 'ASC';
+            addressField.setAttribute('required', '');
+
+            ticketCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    ticketCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    const selectedType = this.getAttribute('data-value');
+                    ticketTypeSelect.value = selectedType;
+
+                    if (selectedType === 'Technical') {
+                        equipmentInfoSection.style.display = 'none';
+                        technicalInfoSection.style.display = 'block';
+                        addressField.removeAttribute('required');
+                    } else {
+                        equipmentInfoSection.style.display = 'block';
+                        technicalInfoSection.style.display = 'none';
+                        addressField.setAttribute('required', '');
+                    }
+                });
+            });
+
+            const sameAddressCheckbox = document.getElementById('same-as-customer');
+            const onSiteAddressField = document.getElementById('on-site-address');
+
+            sameAddressCheckbox.addEventListener('change', function() {
+                if (this.checked && addressField.value) {
+                    onSiteAddressField.value = addressField.value;
+                    onSiteAddressField.readOnly = true;
+                } else {
+                    onSiteAddressField.readOnly = false;
+                }
+            });
+
+            const fileInput = document.getElementById('file-input');
+            const fileUploadArea = document.getElementById('file-upload-area');
+            const fileList = document.getElementById('file-list');
+
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--primary-color)';
+                fileUploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
+            });
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.style.borderColor = 'var(--medium-gray)';
+                fileUploadArea.style.backgroundColor = 'transparent';
+            });
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--medium-gray)';
+                fileUploadArea.style.backgroundColor = 'transparent';
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFileList();
+                }
+            });
+
+            function updateFileList() {
+                fileList.innerHTML = '';
+                if (fileInput.files.length > 0) {
+                    const list = document.createElement('ul');
+                    list.style.listStyle = 'none';
+                    list.style.padding = '0';
+                    list.style.margin = '0';
+
+                    Array.from(fileInput.files).forEach((file, index) => {
+                        const item = document.createElement('li');
+                        item.style.display = 'flex';
+                        item.style.alignItems = 'center';
+                        item.style.justifyContent = 'space-between';
+                        item.style.marginBottom = '10px';
+                        item.style.padding = '10px';
+                        item.style.backgroundColor = '#f9f9f9';
+                        item.style.borderRadius = '6px';
+
+                        const fileInfo = document.createElement('div');
+                        fileInfo.style.display = 'flex';
+                        fileInfo.style.alignItems = 'center';
+
+                        const icon = document.createElement('i');
+                        icon.className = 'fas fa-file';
+                        icon.style.marginRight = '12px';
+                        icon.style.color = '#666';
+
+                        const name = document.createElement('span');
+                        name.textContent = file.name;
+                        name.style.fontSize = '0.9rem';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.style.background = 'none';
+                        removeBtn.style.border = 'none';
+                        removeBtn.style.color = 'var(--primary-color)';
+                        removeBtn.style.cursor = 'pointer';
+                        removeBtn.addEventListener('click', () => {
+                            const dt = new DataTransfer();
+                            Array.from(fileInput.files).forEach((f, i) => {
+                                if (i !== index) dt.items.add(f);
+                            });
+                            fileInput.files = dt.files;
+                            updateFileList();
+                        });
+
+                        fileInfo.appendChild(icon);
+                        fileInfo.appendChild(name);
+                        item.appendChild(fileInfo);
+                        item.appendChild(removeBtn);
+                        list.appendChild(item);
+                    });
+
+                    fileList.appendChild(list);
+                }
+            }
+
+            fileInput.addEventListener('change', updateFileList);
+
+            const form = document.getElementById('ticket-request-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (!ticketTypeSelect.value) {
+                    alert('Please select a ticket type');
+                    return;
+                }
+
+                if (ticketTypeSelect.value === 'Technical' && !document.getElementById('technical-category').value) {
+                    alert('Please select a technical category');
+                    return;
+                }
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<div class="btn-loader"></div> Processing...';
+                submitBtn.disabled = true;
+
+                const formData = new FormData(this);
+
+                fetch('request.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Ticket submitted successfully!\nYour ticket number: ${data.ticket_number}`);
+                        form.reset();
+                        // Reset the date to current date after form reset
+                        setRequestDate();
+                        // Reset other UI elements
+                        ticketCards.forEach(c => c.classList.remove('selected'));
+                        document.querySelector('.ticket-type-card[data-value="ASC"]').classList.add('selected');
+                        ticketTypeSelect.value = 'ASC';
+                        equipmentInfoSection.style.display = 'block';
+                        technicalInfoSection.style.display = 'none';
+                        addressField.setAttribute('required', '');
+                        fileList.innerHTML = '';
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error submitting ticket: ' + error.message);
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

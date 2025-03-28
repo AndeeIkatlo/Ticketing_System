@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Status | JÜMP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/status.css">
+    <style>
+        :root {
+            --primary: #ff0000;
+            --primary-light: #ff4d4d;
+            --primary-dark: #cc0000;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #e0e0e0;
+            --gray-dark: #333333;
+            --border-radius: 16px;
+            --spacing: 24px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Ticket Status Modal Styles */
+        .ticket-card {
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .ticket-header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .ticket-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .ticket-body {
+            padding: 20px;
+        }
+
+        .ticket-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed rgba(255, 0, 0, 0.1);
+        }
+
+        .ticket-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .ticket-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .ticket-section h3 i {
+            font-size: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            width: 150px;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            gap: 8px;
+        }
+
+        .status-badge i {
+            font-size: 0.7rem;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ff9800;
+        }
+
+        .status-in-progress {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+        }
+
+        .status-completed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .status-cancelled {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .attachments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .attachment {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 5px;
+            font-size: 13px;
+            text-decoration: none;
+            color: var(--primary);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .attachment:hover {
+            background: rgba(255, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Dialog Modal */
+        .dialog-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dialog-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .dialog-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-dialog {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: var(--transition);
+        }
+
+        .close-dialog:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        .dialog-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .dialog-action-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .dialog-action-btn i {
+            font-size: 14px;
+        }
+
+        .print-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            color: var(--primary);
+        }
+
+        .print-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            background: var(--primary);
+            border: 1px solid var(--primary-dark);
+            color: white;
+        }
+
+        .close-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .info-label {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card floating">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1>CHECK TICKET STATUS</h1>
+        </div>
+
+        <form id="ticket-status-form" class="status-form">
+            <div class="form-group">
+                <label for="ticket-number">Ticket Number</label>
+                <div class="input-container">
+                    <i class="fas fa-ticket-alt input-icon"></i>
+                    <input type="text" id="ticket-number" class="form-control" 
+                           placeholder="e.g. JUMP-20250226-9829" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Registered Email</label>
+                <div class="input-container">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="email" class="form-control" 
+                           placeholder="Enter your registered email" required>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-search"></i>
+                Check Status
+            </button>
+            <div class="error-message" id="error-message"></div>
+        </form>
+
+        <div class="status-features">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="feature-text">Real-time updates</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="feature-text">Live comments</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="feature-text">Complete history</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Bringing the latest technologies to the Philippines</p>
+        </div>
+    </div>
+
+    <!-- Status Dialog Modal -->
+    <div id="status-dialog" class="dialog-modal">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h2>Ticket Status</h2>
+                <button class="close-dialog">&times;</button>
+            </div>
+            <div class="dialog-body" id="dialog-status-content">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-action-btn print-btn">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="dialog-action-btn close-btn">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('ticket-status-form');
+            const errorMessage = document.getElementById('error-message');
+            const statusDialog = document.getElementById('status-dialog');
+            const dialogContent = document.getElementById('dialog-status-content');
+
+            // Close modal function
+            function closeModal() {
+                statusDialog.style.display = 'none';
+            }
+
+            // Modal controls
+            document.querySelector('.print-btn')?.addEventListener('click', () => window.print());
+            
+            // Form submission handler
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const ticketNumber = document.getElementById('ticket-number').value.trim();
+                const email = document.getElementById('email').value.trim().toLowerCase();
+                errorMessage.textContent = '';
+                errorMessage.style.display = 'none';
+
+                // Loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+
+                try {
+                    const requestData = { ticket_number: ticketNumber };
+                    if (email) requestData.email = email;
+
+                    const response = await fetch('check_status.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message);
+                    }
+
+                    displayTicketDetails(data.ticket, data.attachments);
+                    
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                    console.error('Error:', error);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnContent;
+                }
+            });
+
+            // Display ticket details in modal
+            function displayTicketDetails(ticket, attachments = []) {
+                const statusClass = getStatusClass(ticket.status);
+                const requestDate = new Date(ticket.request_date).toLocaleDateString();
+                const createdAt = new Date(ticket.created_at).toLocaleString();
+                
+                dialogContent.innerHTML = `
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <h2>Ticket Status</h2>
+                            <div class="ticket-number">${ticket.ticket_number}</div>
+                        </div>
+                        
+                        <div class="ticket-body">
+                            <!-- Customer Information -->
+                            <div class="ticket-section">
+                                <h3><i class="fas fa-user"></i> Customer Information</h3>
+                                <div class="info-row">
+                                    <div class="info-label">Customer Name</div>
+                                    <div class="info-value">${ticket.customer_name}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Contact Person</div>
+                                    <div class="info-value">${ticket.contact_person || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value">${ticket.email || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Mobile</div>
+                                    <div class="info-value">${ticket.mobile || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Address</div>
+                                    <div class="info-value">${ticket.address || 'N/A'}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Service Information -->
+                            <div class="ticket-section">
+                                <h3><i class="fas fa-tools"></i> Service Information</h3>
+                                <div class="info-row">
+                                    <div class="info-label">Request Date</div>
+                                    <div class="info-value">${requestDate}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Created At</div>
+                                    <div class="info-value">${createdAt}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">On-Site Address</div>
+                                    <div class="info-value">${ticket.on_site_address || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Ticket Type</div>
+                                    <div class="info-value">${ticket.ticket_type || 'Technical Support'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Status</div>
+                                    <div class="info-value">
+                                        <span class="status-badge status-${statusClass}">
+                                            <i class="fas fa-circle"></i> ${ticket.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Equipment Information -->
+                            <div class="ticket-section">
+                                <h3><i class="fas fa-desktop"></i> Equipment Information</h3>
+                                <div class="info-row">
+                                    <div class="info-label">Brand</div>
+                                    <div class="info-value">${ticket.brand || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Make</div>
+                                    <div class="info-value">${ticket.make || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Model</div>
+                                    <div class="info-value">${ticket.model || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Serial No</div>
+                                    <div class="info-value">${ticket.serial_no || 'N/A'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">Warranty Status</div>
+                                    <div class="info-value">${ticket.warranty_status || 'N/A'}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Information -->
+                            <div class="ticket-section">
+                                <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+                                <div class="info-row">
+                                    <div class="info-label">Remarks</div>
+                                    <div class="info-value">${ticket.remarks || 'No remarks provided'}</div>
+                                </div>
+                                ${attachments.length > 0 ? `
+                                <div class="info-row">
+                                    <div class="info-label">Attachments</div>
+                                    <div class="info-value">
+                                        <div class="attachments">
+                                            ${attachments.map(file => `
+                                                <a href="${file.file_path}" target="_blank" class="attachment">
+                                                    <i class="fas fa-paperclip"></i> ${file.file_name}
+                                                </a>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Reattach event listeners
+                document.querySelector('.close-dialog').addEventListener('click', closeModal);
+                document.querySelector('.close-btn').addEventListener('click', closeModal);
+                document.querySelector('.print-btn').addEventListener('click', () => window.print());
+                
+                statusDialog.style.display = 'flex';
+            }
+
+            // Helper function to get status class
+            function getStatusClass(status) {
+                if (!status) return '';
+                status = status.toLowerCase();
+                if (status.includes('complete')) return 'completed';
+                if (status.includes('progress')) return 'in-progress';
+                if (status.includes('pending')) return 'pending';
+                if (status.includes('cancel')) return 'cancelled';
+                return '';
+            }
+        });
+    </script>
+</body>
+</html>
